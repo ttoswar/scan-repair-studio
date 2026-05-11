@@ -8,8 +8,6 @@ Import USDZ -> Preview original model -> Convert to GLB -> Repair via API -> Pre
 
 The app is currently designed for local use. Imported scan files stay in the browser until the user explicitly starts a repair task.
 
-![Scan Repair Studio interface preview](docs/assets/app-preview.svg)
-
 ## Features
 
 - Drag-and-drop `.usdz` import.
