@@ -1,55 +1,57 @@
-# Usage Guide
+# 使用说明
 
-## 1. Start The App
+## 1. 启动应用
 
 ```bash
 npm install
 npm run dev -- --host 127.0.0.1 --port 5173
 ```
 
-Open `http://127.0.0.1:5173/`.
+打开 `http://127.0.0.1:5173/`。
 
-## 2. Import A USDZ Scan
+## 2. 导入 USDZ 扫描文件
 
-Use the drop zone in the right panel to select or drag in a `.usdz` file.
+使用右侧面板的拖拽区域选择或拖入 `.usdz` 文件。
 
-The app parses the file in the browser and displays the original scan. If parsing fails, the source app may have exported a USDZ variant that Three.js cannot read yet.
+应用会在浏览器中解析文件并显示原始扫描模型。如果解析失败，通常说明扫描 App 导出的 USDZ 变体暂时不被当前 Three.js loader 支持。
 
-## 3. Preview Modes
+## 3. 预览模式
 
-- `Original`: shows the imported scan.
-- `Repaired`: shows only the repaired result after a successful repair task.
-- `Side-by-side`: shows original on the left and repaired result on the right.
-- `Difference`: overlays original and repaired models for diagnostic comparison.
+- `原始`：显示导入的原始扫描模型。
+- `修复`：修复任务成功后，只显示修复结果。
+- `实体对比`：左侧显示原始模型，右侧显示修复模型，适合面向用户展示。
+- `差异`：叠加原始模型和修复模型，适合排查拓扑变化。
 
-Render modes:
+渲染模式：
 
-- `Solid`: best for user-facing inspection.
-- `Wireframe`: useful for topology and remesh checks.
-- `Point cloud`: useful for scan density inspection.
+- `实体`：最适合用户查看修复后的可视化效果。
+- `线框`：适合检查拓扑、三角面和 remesh 变化。
+- `点云`：适合观察扫描密度和模型采样情况。
 
-## 4. API Key
+## 4. API Key 要求
 
-Use a 3D AI Studio API Key. Keys from DeepSeek, OpenAI, or other LLM vendors are not compatible because this app calls a mesh repair endpoint, not a text-generation endpoint.
+请使用 3D AI Studio 的 API Key。
 
-The key is stored only in React state for the current page session.
+DeepSeek、OpenAI 或其他文本大模型平台的 API Key 不能用于本项目，因为这里调用的是 3D 模型修复接口，不是文本生成接口。
 
-## 5. Repair Options
+当前页面只会把 API Key 保存在 React 页面状态中；刷新页面后需要重新输入。
 
-`Bake textures`
+## 5. 修复参数
 
-Keeps visual color and texture detail on the repaired mesh. Leave enabled for normal preview workflows.
+`烘焙纹理`
 
-`Hollow`
+把原模型的颜色和纹理信息尽量转移到修复后的新网格上。普通预览和展示场景建议开启。
 
-Creates a hollow structure. Leave disabled unless preparing an asset for 3D printing or material reduction.
+`空心化`
 
-`Quality`
+把模型处理成内部中空结构，主要用于 3D 打印时减少材料。普通扫描预览不建议开启。
 
-Controls the third-party repair quality parameter. `default` is the safest first pass.
+`质量`
 
-## 6. Interpreting Results
+对应第三方修复接口的质量参数。首次使用建议保持 `default`。
 
-Mesh repair often changes topology rather than visible surface shape. A successful repair can look similar in solid mode while still changing vertices, triangles, normals, loose faces, or watertightness.
+## 6. 如何理解修复结果
 
-Check the `Repair comparison` panel after repair. If mesh, vertex, and triangle counts are nearly identical, the API likely returned a result that is very close to the input model.
+Mesh repair 经常改变的是拓扑结构，而不是外观轮廓。一个修复成功的模型，在实体模式下可能看起来和原模型非常相似，但顶点数、三角面数、法线、松散面和封闭性已经发生变化。
+
+修复完成后建议查看右侧的「修复对比」面板。如果 Mesh、顶点、三角面数量几乎没有变化，说明第三方接口对当前模型返回了非常接近输入的结果。
